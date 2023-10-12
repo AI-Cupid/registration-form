@@ -67,6 +67,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
+      publicPath: "/registration-form/",
       // publicPath: '/',
       // analyze: true,
       // env: {},
