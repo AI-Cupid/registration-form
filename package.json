@@ -11,7 +11,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "deploy": "git push origin -d gh-pages; quasar build; git subtree push --prefix dist/spa origin gh-pages"
+    "deploy": "git push origin -d gh-pages; quasar build; git add .; git ca \"Update build files\"; git push; git subtree push --prefix dist/spa origin gh-pages"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
