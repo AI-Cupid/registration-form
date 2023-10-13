@@ -12,4 +12,5 @@ export default {
   bio: 'Bio',
   male: 'Male',
   female: 'Female',
+  submit: 'Submit',
 };
