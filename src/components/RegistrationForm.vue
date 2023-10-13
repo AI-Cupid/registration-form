@@ -1,22 +1,25 @@
 <template>
-  <div class="row justify-between q-col-gutter-y-md q-col-gutter-x-sm">
+  <q-form ref="form" class="row justify-between q-col-gutter-y-md q-col-gutter-x-sm">
     <q-input
       v-model="entity.phone_number"
       class="col-12"
       mask="(###) ###-####"
       :label="$t('phoneNumber')"
+      :rules="[(val) => !!val || 'Required']"
       dense
     />
     <q-input
       v-model="entity.first_name"
       class="col-6"
       :label="$t('firstName')"
+      :rules="[(val) => !!val || 'Required']"
       dense
     />
     <q-input
       v-model="entity.last_name"
       class="col-6"
       :label="$t('lastName')"
+      :rules="[(val) => !!val || 'Required']"
       dense
     />
     <q-select
@@ -24,6 +27,7 @@
       :options="ageOptions"
       class="col-6"
       :label="$t('age')"
+      :rules="[(val) => !!val || 'Required']"
       dense
     />
     <q-select
@@ -35,12 +39,14 @@
       option-label="label"
       class="col-6"
       :label="$t('gender')"
+      :rules="[(val) => !!val || 'Required']"
       dense
     />
     <q-input
       v-model="entity.bio"
       class="col-12"
       :label="$t('bio')"
+      :rules="[(val) => !!val || 'Required']"
       type="textarea"
       dense
       autogrow
@@ -51,14 +57,16 @@
       @click="handleSubmit"
       color="primary"
       noCaps
+      :loading="isLoading"
     />
-  </div>
+  </q-form>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
 import { createClient } from '@supabase/supabase-js';
+import { Notify, QForm } from 'quasar';
 
 interface IUser {
   phone_number: string;
@@ -83,6 +91,8 @@ const entity = ref<IUser>({
   gender: '',
   bio: '',
 });
+const isLoading = ref(false);
+const form = ref<QForm>();
 const genderOptions = [
   { id: 'cb267d3f-ac75-4a07-99fa-40f2c2e5b91f', label: 'male' },
   { id: '2465f2f8-389d-40ce-b2d8-111298eb2b68', label: 'female' },
@@ -102,6 +112,22 @@ const getGenderOptions = () => {
 };
 
 const handleSubmit = async () => {
-  await supabase.from('USERS').insert([entity.value]);
+  const valid = await form.value?.validate()
+  if (!valid) return
+  isLoading.value = true;
+  const result = await supabase.from('USERS').insert([entity.value]);
+  isLoading.value = false;
+  if (result.status === 201)
+    Notify.create({
+      message: 'Successfully Registered!',
+      color: 'positive',
+      position: 'top'
+    });
+  else
+    Notify.create({
+      message: 'Oops we are having an issue',
+      color: 'negative',
+      position: 'top'
+    });
 };
 </script>
